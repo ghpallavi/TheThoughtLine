@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Thought Line</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      background: linear-gradient(to top, #b8c6db, #f5f7fa);
+      color: #333;
+      padding: 20px;
+      margin: 0;
+    }
+    h1 {
+      font-size: 2.5em;
+      color: #4a6fa5;
+      margin-top: 40px;
+    }
+    #game-board {
+      margin: 30px auto;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+    .tile {
+      width: 100px;
+      height: 100px;
+      border-radius: 20px;
+      background-color: #dcdcdc;
+      cursor: pointer;
+      transition: background-color 0.3s, box-shadow 0.3s;
+    }
+    .glow {
+      box-shadow: 0 0 15px 5px rgba(255, 255, 255, 0.8);
+    }
+    #status {
+      font-size: 1.2em;
+      margin-top: 20px;
+    }
+    footer {
+      font-size: 0.9em;
+      color: #888;
+      margin-top: 60px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🚋 The Thought Line</h1>
+  <div id="game-board"></div>
+  <div id="status">Watch the pattern...</div>
+
+  <footer>
+    A calm memory journey. Secure. Risk-free. Hand-coded with soul.
+  </footer>
+
+  <script>
+    // Define color palette for the game tiles
+    const colors = ['#f28c8c', '#8cd1f2', '#b3f28c', '#e6a8f2'];
+    const board = document.getElementById('game-board');
+    const statusText = document.getElementById('status');
+    let pattern = [], userIndex = 0;
+
+    // Create interactive tiles with event listeners
+    function createTiles() {
+      colors.forEach((color, index) => {
+        const tile = document.createElement('div');
+        tile.classList.add('tile');
+        tile.style.backgroundColor = color;
+        tile.dataset.index = index;
+        tile.addEventListener('click', handleUserInput);
+        board.appendChild(tile);
+      });
+    }
+
+    // Highlight a tile visually
+    function glowTile(index) {
+      const tile = board.children[index];
+      tile.classList.add('glow');
+      setTimeout(() => tile.classList.remove('glow'), 600);
+    }
+
+    // Display the current memory pattern
+    function playPattern() {
+      statusText.textContent = 'Watch the pattern...';
+      userIndex = 0;
+      pattern.push(Math.floor(Math.random() * colors.length));
+      pattern.forEach((colorIndex, i) => {
+        setTimeout(() => glowTile(colorIndex), 800 * i);
+      });
+      setTimeout(() => statusText.textContent = 'Your turn...', 800 * pattern.length);
+    }
+
+    // Handle player input and feedback
+    function handleUserInput(e) {
+      const index = parseInt(e.target.dataset.index);
+      if (index === pattern[userIndex]) {
+        glowTile(index);
+        userIndex++;
+        if (userIndex === pattern.length) {
+          statusText.textContent = `✨ Thought unlocked: "${getThought()}"`;
+          setTimeout(playPattern, 1500);
+        }
+      } else {
+        statusText.textContent = '🚫 Distracted! Let’s refocus...';
+        pattern = [];
+        setTimeout(playPattern, 2000);
+      }
+    }
+
+    // Provide a calm word each successful round
+    function getThought() {
+      const thoughts = ['Clarity', 'Peace', 'Focus', 'Joy', 'Patience', 'Kindness'];
+      return thoughts[Math.floor(Math.random() * thoughts.length)];
+    }
+
+    // Initialize game on page load
+    createTiles();
+    playPattern();
+  </script>
+</body>
+</html>
